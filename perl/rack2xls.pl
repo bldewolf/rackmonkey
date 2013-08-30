@@ -44,6 +44,21 @@ our ($template, $cgi, $conf, $backend);
 
 $cgi = new RackMonkey::CGI;
 
+sub calculateAge
+{
+    my $date = shift;
+    return unless defined $date;
+    my ($year, $month, $day) = $date =~ /(\d{4})-(\d{2})-(\d{2})/;
+    if ($year)
+    {
+        $month--;    # perl months start at 0
+        my $startTime = timelocal(0, 0, 12, $day, $month, $year);
+        my $age = (time - $startTime) / (86400 * 365.24);    # Age in years
+        return sprintf("%.1f", $age);
+    }
+    return '';
+}
+
 my $rack_layout;
 eval {
     $backend = RackMonkey::Engine->new;
@@ -97,7 +112,9 @@ eval {
         $worksheet->write(0, 16, "Asset",          $headers_format);
         $worksheet->write(0, 17, "Customer",       $headers_format);
         $worksheet->write(0, 18, "Service Level",  $headers_format);
-        $worksheet->write(0, 19, "Notes",          $headers_format);
+        $worksheet->write(0, 19, "Age",            $headers_format);
+        $worksheet->write(0, 20, "Date Purchased", $headers_format);
+        $worksheet->write(0, 21, "Notes",          $headers_format);
 
         $worksheet->set_column(0,  0,  20);
         $worksheet->set_column(1,  1,  30);
@@ -113,8 +130,8 @@ eval {
         $worksheet->set_column(12, 12, 22);
         $worksheet->set_column(13, 13, 13);
         $worksheet->set_column(14, 14, 38);
-        $worksheet->set_column(15, 18, 22);
-        $worksheet->set_column(19, 19, 100);
+        $worksheet->set_column(15, 20, 22);
+        $worksheet->set_column(21, 21, 100);
 
         # start writing data in the first column and below the header
         my $col = 0;
@@ -188,6 +205,15 @@ eval {
 
             $worksheet->write($row, $col++, $device->{'customer_name'},      $format);
             $worksheet->write($row, $col++, $device->{'service_name'},       $format);
+
+            if($device->{'purchased'}) {
+                $worksheet->write($row, $col++, calculateAge($device->{'purchased'}), $format);
+                $worksheet->write($row, $col++, $device->{'purchased'}, $format);
+            } else {
+                $worksheet->write($row, $col++, '-', $format);
+                $worksheet->write($row, $col++, '-', $format);
+            }
+
             $worksheet->write($row, $col++, formatNotes($device->{'notes'}), $format);
 
             $row++;
