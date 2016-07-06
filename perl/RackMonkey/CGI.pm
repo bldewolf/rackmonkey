@@ -86,19 +86,19 @@ sub actId
 sub act
 {
     my $self = shift;
-    return $self->cgi->param('act');
+    return scalar $self->cgi->param('act');
 }
 
 sub actOn
 {
     my $self = shift;
-    $self->cgi->param('act_on');
+    scalar $self->cgi->param('act_on');
 }
 
 sub queryOn
 {
     my $self = shift;
-    $self->cgi->param('query_on');
+    scalar self->cgi->param('query_on');
 }
 
 sub orderBy
@@ -135,13 +135,13 @@ sub filterBy
 sub deviceSearch
 {
     my $self = shift;
-    return $self->cgi->param('device_search') if ($self->cgi->param('device_search'));
+    return scalar $self->cgi->param('device_search') if ($self->cgi->param('device_search'));
 }
 
 sub showFilters
 {
     my $self = shift;
-    return $self->cgi->param('show_filters');
+    return scalar $self->cgi->param('show_filters');
 }
 
 sub redirect303
@@ -172,13 +172,13 @@ sub lastCreatedId
 sub returnView
 {
     my $self = shift;
-    return $self->cgi->param('return_view');
+    return scalar $self->cgi->param('return_view');
 }
 
 sub returnViewType
 {
     my $self = shift;
-    return $self->cgi->param('return_view_type');
+    return scalar $self->cgi->param('return_view_type');
 }
 
 sub returnViewId
@@ -214,13 +214,13 @@ sub id
 sub rackList
 {
     my $self = shift;
-    return $self->cgi->param('rack_list');
+    return $self->cgi->multi_param('rack_list');
 }
 
 sub selectProperty    # should get all prefill vars going via this sub
 {
     my ($self, $property) = @_;
-    return $self->cgi->param('select_' . $property);
+    return scalar $self->cgi->param('select_' . $property);
 }
 
 ##############################################################################
