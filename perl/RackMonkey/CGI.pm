@@ -220,7 +220,7 @@ sub rackList
 sub selectProperty    # should get all prefill vars going via this sub
 {
     my ($self, $property) = @_;
-    return scalar $self->cgi->param('select_' . $property);
+    return (scalar $self->cgi->param('select_' . $property)) || return;
 }
 
 ##############################################################################
