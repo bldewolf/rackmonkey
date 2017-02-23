@@ -1811,7 +1811,8 @@ sub rackListBasic
 			building.name,
 			room.name,
 			row.room_pos,
-			rack.row_pos
+			rack.row_pos,
+			rack.name
 	!
     );
     $sth->execute;
