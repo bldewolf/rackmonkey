@@ -224,7 +224,7 @@ sub performAct
     my $actStr  = $act;
     my $typeStr = $type;
     $act = 'update' if ($act eq 'insert');
-    croak "RM_ENGINE: '$act is not a recognised act. This error should not occur, did you manually type this URL?" unless $act =~ /^(?:update|delete)$/;
+    croak "RM_ENGINE: '$act is not a recognised act. This error should not occur, did you manually type this URL?" unless $act =~ /^(?:update|delete|remove)$/;
 
     # check username for update is valid
     croak "RM_ENGINE: User update names must be less than " . $self->getConf('maxstring') . " characters."
@@ -824,6 +824,17 @@ sub updateDevice
         $newId = $self->_lastInsertId('device');
     }
     return $newId || $$record{'id'};
+}
+
+sub removeDevice
+{
+    my ($self, $updateTime, $updateUser, $record) = @_;
+    my $removeId = (ref $record eq 'HASH') ? $$record{'id'} : $record;
+    croak "RM_ENGINE: Remove failed. No device id specified." unless ($removeId);
+    my $sth = $self->dbh->prepare(qq!UPDATE device SET rack = 1 WHERE id = ?!);
+    my $ret = $sth->execute($removeId);
+    croak "RM_ENGINE: Update failed. This device could not be removed." if ($ret eq '0E0');
+    return $removeId;
 }
 
 sub deleteDevice
